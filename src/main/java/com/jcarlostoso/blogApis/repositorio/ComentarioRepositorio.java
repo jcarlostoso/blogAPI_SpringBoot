@@ -5,6 +5,7 @@
 package com.jcarlostoso.blogApis.repositorio;
 
 import com.jcarlostoso.blogApis.entidades.Comentario;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -12,5 +13,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author bynot
  */
 public interface ComentarioRepositorio extends JpaRepository<Comentario, Long>{
-    
+   
+    public List<Comentario> findByPublicacionId(long publicacionId);
 }

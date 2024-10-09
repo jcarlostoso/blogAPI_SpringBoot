@@ -7,11 +7,14 @@ package com.jcarlostoso.blogApis.servicio;
 import com.jcarlostoso.blogApis.dto.ComentarioDTO;
 import com.jcarlostoso.blogApis.entidades.Comentario;
 import com.jcarlostoso.blogApis.entidades.Publicacion;
+import com.jcarlostoso.blogApis.excepciones.BlogAppException;
 import com.jcarlostoso.blogApis.excepciones.ResourceNotFoundException;
 import com.jcarlostoso.blogApis.repositorio.ComentarioRepositorio;
 import com.jcarlostoso.blogApis.repositorio.PublicacionRepositorio;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,18 +22,19 @@ import org.springframework.stereotype.Service;
  * @author bynot
  */
 @Service
-public class ComentarioServicioImpl implements ComentarioServicio{
+public class ComentarioServicioImpl implements ComentarioServicio {
 
     @Autowired
     private ComentarioRepositorio comentarioRepositorio;
-    
+
     @Autowired
     private PublicacionRepositorio publicacionRepositorio;
+
     @Override
     public ComentarioDTO crearComentario(long publicacionId, ComentarioDTO comentariodto) {
         Comentario comentario = maperEntidad(comentariodto);
-        Publicacion publicacion= publicacionRepositorio.findById(publicacionId)
-                .orElseThrow(()->new ResourceNotFoundException("Publicacion","id",publicacionId));
+        Publicacion publicacion = publicacionRepositorio.findById(publicacionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Publicacion", "id", publicacionId));
         comentario.setPublicacion(publicacion);
         Comentario nuevoComentario = comentarioRepositorio.save(comentario);
         return mapearDTO(comentario);
@@ -38,25 +42,58 @@ public class ComentarioServicioImpl implements ComentarioServicio{
 
     @Override
     public List<ComentarioDTO> obtenerComentariosPorPublicacionId(long publicacionId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Comentario> comentarios = comentarioRepositorio.findByPublicacionId(publicacionId);
+        return comentarios.stream().map(comentario -> mapearDTO(comentario)).collect(Collectors.toList());
+
     }
 
     @Override
     public ComentarioDTO obtenerComentarioPorId(Long publicacionId, Long comentarioId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Publicacion publicacion = publicacionRepositorio.findById(publicacionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Publicacion", "id", publicacionId));
+        Comentario comentario = comentarioRepositorio.findById(comentarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comentario", "id", comentarioId));
+        if (!comentario.getPublicacion().getId().equals(publicacion.getId())) {
+            throw new BlogAppException(HttpStatus.BAD_REQUEST, "El comentario no pertenece a la publicacion");
+        }
+        return mapearDTO(comentario);
     }
 
     @Override
     public ComentarioDTO actualizarComentario(Long publicacionId, Long comentarioId, ComentarioDTO solicitudDeComentario) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Publicacion publicacion = publicacionRepositorio.findById(publicacionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Publicacion", "id", publicacionId));
+        Comentario comentario = comentarioRepositorio.findById(comentarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comentario", "id", comentarioId));
+        if (!comentario.getPublicacion().getId().equals(publicacion.getId())) {
+            throw new BlogAppException(HttpStatus.BAD_REQUEST, "El comentario no pertenece a la publicacion");
+        }
+
+        comentario.setNombre(solicitudDeComentario.getNombre());
+        comentario.setEmail(solicitudDeComentario.getEmail());
+        comentario.setCuerpo(solicitudDeComentario.getCuerpo());
+        Comentario comentarioActualizado = comentarioRepositorio.save(comentario);
+
+        return mapearDTO(comentarioActualizado);
+
     }
 
     @Override
     public void eliminarComentario(Long publicacionId, Long comentarioId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Publicacion publicacion = publicacionRepositorio.findById(publicacionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Publicacion", "id", publicacionId));
+
+        Comentario comentario = comentarioRepositorio.findById(comentarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comentario", "id", comentarioId));
+
+        if (!comentario.getPublicacion().getId().equals(publicacion.getId())) {
+            throw new BlogAppException(HttpStatus.BAD_REQUEST, "El comentario no pertenece a la publicación");
+        }
+
+        comentarioRepositorio.delete(comentario);
     }
-    
-    private ComentarioDTO mapearDTO(Comentario comentario){
+
+    private ComentarioDTO mapearDTO(Comentario comentario) {
         ComentarioDTO comentarioDTO = new ComentarioDTO();
         comentarioDTO.setId(comentario.getId());
         comentarioDTO.setNombre(comentario.getNombre());
@@ -64,8 +101,8 @@ public class ComentarioServicioImpl implements ComentarioServicio{
         comentarioDTO.setCuerpo(comentario.getCuerpo());
         return comentarioDTO;
     }
-    
-    private Comentario maperEntidad(ComentarioDTO comentarioDTO){
+
+    private Comentario maperEntidad(ComentarioDTO comentarioDTO) {
         Comentario comentario = new Comentario();
         comentario.setId(comentarioDTO.getId());
         comentario.setNombre(comentarioDTO.getNombre());
@@ -73,5 +110,5 @@ public class ComentarioServicioImpl implements ComentarioServicio{
         comentario.setCuerpo(comentarioDTO.getCuerpo());
         return comentario;
     }
-    
+
 }
