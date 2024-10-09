@@ -4,6 +4,7 @@
  */
 package com.jcarlostoso.blogApis.entidades;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,33 +23,25 @@ import lombok.Data;
  * @author bynot
  */
 @Entity
-@Table(name = "Publicaciones", uniqueConstraints = {@UniqueConstraint(columnNames = {"titulo"})})
+@Table(name = "Publicaciones", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"titulo"})})
 @Data
 public class Publicacion {
 
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-@Column(name = "titulo", nullable = false)
-private String titulo;
-@Column(name = "descripcion", nullable = false)
-private String descripcion;
+    @Column(name = "titulo", nullable = false)
+    private String titulo;
+    @Column(name = "descripcion", nullable = false)
+    private String descripcion;
 
-@Column(name = "contenido", nullable = false)
-private String contenido;
+    @Column(name = "contenido", nullable = false)
+    private String contenido;
 
-@OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL,orphanRemoval = true)
-private Set<Comentario> comentarios = new HashSet<>();
+	@JsonBackReference
+	@OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Comentario> comentarios = new HashSet<>();
 
-    public Publicacion(Long id, String titulo, String descripcion, String contenido) {
-        this.id = id;
-        this.titulo = titulo;
-        this.descripcion = descripcion;
-        this.contenido = contenido;
-    }
-
-    public Publicacion() {
-    }  
-    
 }

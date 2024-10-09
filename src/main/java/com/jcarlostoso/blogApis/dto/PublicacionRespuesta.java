@@ -23,14 +23,7 @@ public class PublicacionRespuesta {
     public PublicacionRespuesta() {
     }
 
-    public PublicacionRespuesta(List<PublicacionDTO> contenido, int numeroPagina, int medidaPagina, long totalElementos, int totalPaginas, boolean ultima) {
-        this.contenido = contenido;
-        this.numeroPagina = numeroPagina;
-        this.medidaPagina = medidaPagina;
-        this.totalElementos = totalElementos;
-        this.totalPaginas = totalPaginas;
-        this.ultima = ultima;
-    }
+
     
     
 }

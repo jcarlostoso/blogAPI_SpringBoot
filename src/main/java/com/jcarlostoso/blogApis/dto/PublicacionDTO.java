@@ -4,6 +4,8 @@
  */
 package com.jcarlostoso.blogApis.dto;
 
+import com.jcarlostoso.blogApis.entidades.Comentario;
+import java.util.Set;
 import lombok.Data;
 
 /**
@@ -17,16 +19,6 @@ public class PublicacionDTO {
     private String titulo;
     private String descripcion;
     private String contenido;
-
-    public PublicacionDTO() {
-    }
-
-    public PublicacionDTO(Long id, String titulo, String descripcion, String contenido) {
-        this.id = id;
-        this.titulo = titulo;
-        this.descripcion = descripcion;
-        this.contenido = contenido;
-    }
-    
-    
+    private Set<Comentario> comentarios;
+  
 }

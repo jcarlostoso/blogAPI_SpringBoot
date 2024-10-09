@@ -7,6 +7,7 @@ package com.jcarlostoso.blogApis.controlador;
 import com.jcarlostoso.blogApis.dto.PublicacionDTO;
 import com.jcarlostoso.blogApis.dto.PublicacionRespuesta;
 import com.jcarlostoso.blogApis.servicio.PublicacionServicio;
+import com.jcarlostoso.blogApis.utilerias.AppConstantes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,15 +38,15 @@ public class PublicacionControlador {
         return new ResponseEntity<>(publicacionServicio.crearPublicacion(publicacionDTO), HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public PublicacionRespuesta listarPublicaciones(
-            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int numeroDePagina,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int medidaDePagina,
-            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String ordenarPor,
-            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
-    ) {
-        return publicacionServicio.obtenerTodasLasPublicaciones(numeroDePagina, medidaDePagina, ordenarPor, sortDir);
-    }
+    
+	@GetMapping
+	public PublicacionRespuesta listarPublicaciones(
+			@RequestParam(value = "pageNo", defaultValue = AppConstantes.NUMERO_DE_PAGINA_POR_DEFECTO, required = false) int numeroDePagina,
+			@RequestParam(value = "pageSize", defaultValue = AppConstantes.MEDIDA_DE_PAGINA_POR_DEFECTO, required = false) int medidaDePagina,
+			@RequestParam(value = "sortBy", defaultValue = AppConstantes.ORDENAR_POR_DEFECTO, required = false) String ordenarPor,
+			@RequestParam(value = "sortDir", defaultValue = AppConstantes.ORDENAR_DIRECCION_POR_DEFECTO, required = false) String sortDir) {
+		return publicacionServicio.obtenerTodasLasPublicaciones(numeroDePagina, medidaDePagina, ordenarPor, sortDir);
+	}
 
     @GetMapping("/{id}")
     public ResponseEntity<PublicacionDTO> obtenerPublicacionPorId(@PathVariable(name = "id") long id) {
