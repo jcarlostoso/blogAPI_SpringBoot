@@ -7,6 +7,7 @@ package com.jcarlostoso.blogApis.controlador;
 import com.jcarlostoso.blogApis.dto.ComentarioDTO;
 import com.jcarlostoso.blogApis.entidades.Comentario;
 import com.jcarlostoso.blogApis.servicio.ComentarioServicio;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,7 +44,7 @@ public class ComentarioControlador {
 	}
 	
 	@PostMapping("/publicaciones/{publicacionId}/comentarios")
-	public ResponseEntity<ComentarioDTO> guardarComentario(@PathVariable(value = "publicacionId") long publicacionId,@RequestBody ComentarioDTO comentarioDTO){
+	public ResponseEntity<ComentarioDTO> guardarComentario(@PathVariable(value = "publicacionId") long publicacionId,@Valid @RequestBody ComentarioDTO comentarioDTO){
 		return new ResponseEntity<>(comentarioServicio.crearComentario(publicacionId, comentarioDTO),HttpStatus.CREATED);
 	}
 	
